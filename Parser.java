@@ -134,8 +134,10 @@ public class Parser {
     }
 
     private boolean E() {
-        if (!T()) return false;
-            return EPrime();
+        if(!T()){
+            return false;
+        }
+        return EPrime();
     }
 
     /* TODO: sus otras funciones aqui */
@@ -144,122 +146,100 @@ public class Parser {
     return true;
     }
 
-    private boolean EPrime(){
+    private boolean EPrime() {
+        int pos = next;
         if(term(Token.PLUS)){
-            if(!T()){
-                return false;
-            } 
-            else{
-                return EPrime();
+            if(T() && EPrime()){
+                return true;
             }
-        } 
-        else if(term(Token.MINUS)){
-            if(!T()){
-                return false;
-            } 
-            else{
-                return EPrime();
-            }
-        } 
-        else{
-            return true;
+            next = pos;
         }
-
+        pos = next;
+        if(term(Token.MINUS)){
+            if(T() && EPrime()){
+                return true;
+            }
+            next = pos;
+        }
+        return true;//Lambda
     }
 
 
     private boolean T(){
         if(!F()){
             return false;
-        } 
-        else{
-            return TPrime();
         }
+        return TPrime();
     }
-
 
     private boolean TPrime(){
+        int pos = next;
         if(term(Token.MULT)){
-            if(!F()){
-                return false;
-            } 
-            else{
-                return TPrime();
+            if(F() && TPrime()){
+                return true;
             }
-        } 
-        else if(term(Token.DIV)){
-            if(!F()){
-                return false;
-            } 
-            else{
-                return TPrime();
-            }
-        } 
-        else if(term(Token.MOD)){
-            if(!F()){
-                return false;
-            }
-
-            else{
-                return TPrime();
-            }
-        } 
-        else{//Lambda
-            return true;
+            next = pos;
         }
+        pos = next;
 
+        if(term(Token.DIV)){
+            if(F() && TPrime()){
+                return true;
+            }
+            next = pos;
+        }
+        pos = next;
+
+        if(term(Token.MOD)){
+            if(F() && TPrime()){
+                return true;
+            }
+            next = pos;
+        }
+        return true;
     }
-
 
     private boolean F(){
         if(!G()){
             return false;
-        } 
-        else{
-            return FPrime();
         }
+        return FPrime();
     }
 
-
-   
     private boolean FPrime(){
+        int pos = next;
         if(term(Token.EXP)){
-            if(!G()){
-                return false;
-            } 
-            else{
-                return FPrime();
+            if(G() && FPrime()){
+                return true;
             }
-        } 
-        else{
-            return true;
+            next = pos;
         }
+        return true;
     }
-
 
     private boolean G(){
+        int pos = next;
         if(term(Token.MINUS)){
-            return G();
-        } 
-        else if(term(Token.LPAREN)){
-            if(!E()){
-                return false;
-            } 
-            else{
-                if(!term(Token.RPAREN)){
-                    return false;
-                } 
-                else{
-                    return true;
-                }
+            if(G()){
+                return true;
             }
-        } 
-        else if(term(Token.NUMBER)){
-            return true;
-        } 
-        else{
-            return false;
+            next = pos; 
         }
+
+        pos = next;
+        if(term(Token.LPAREN)){
+            if(E() && term(Token.RPAREN)){
+                return true;
+            }
+            next = pos;
+        }
+
+        pos = next;
+        if(term(Token.NUMBER)){
+            return true;
+        }
+        return false;
+        
     }
 
 }
