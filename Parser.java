@@ -128,14 +128,138 @@ public class Parser {
         	// Al terminar operaciones pendientes, guardamos op en stack
 
     }
-
+    
     private boolean S() {
         return E() && term(Token.SEMI);
     }
 
     private boolean E() {
-        return false;
+        if (!T()) return false;
+            return EPrime();
     }
 
     /* TODO: sus otras funciones aqui */
+
+    private boolean X1() {
+    return true;
+    }
+
+    private boolean EPrime(){
+        if(term(Token.PLUS)){
+            if(!T()){
+                return false;
+            } 
+            else{
+                return EPrime();
+            }
+        } 
+        else if(term(Token.MINUS)){
+            if(!T()){
+                return false;
+            } 
+            else{
+                return EPrime();
+            }
+        } 
+        else{
+            return true;
+        }
+
+    }
+
+
+    private boolean T(){
+        if(!F()){
+            return false;
+        } 
+        else{
+            return TPrime();
+        }
+    }
+
+
+    private boolean TPrime(){
+        if(term(Token.MULT)){
+            if(!F()){
+                return false;
+            } 
+            else{
+                return TPrime();
+            }
+        } 
+        else if(term(Token.DIV)){
+            if(!F()){
+                return false;
+            } 
+            else{
+                return TPrime();
+            }
+        } 
+        else if(term(Token.MOD)){
+            if(!F()){
+                return false;
+            }
+
+            else{
+                return TPrime();
+            }
+        } 
+        else{//Lambda
+            return true;
+        }
+
+    }
+
+
+    private boolean F(){
+        if(!G()){
+            return false;
+        } 
+        else{
+            return FPrime();
+        }
+    }
+
+
+   
+    private boolean FPrime(){
+        if(term(Token.EXP)){
+            if(!G()){
+                return false;
+            } 
+            else{
+                return FPrime();
+            }
+        } 
+        else{
+            return true;
+        }
+    }
+
+
+    private boolean G(){
+        if(term(Token.MINUS)){
+            return G();
+        } 
+        else if(term(Token.LPAREN)){
+            if(!E()){
+                return false;
+            } 
+            else{
+                if(!term(Token.RPAREN)){
+                    return false;
+                } 
+                else{
+                    return true;
+                }
+            }
+        } 
+        else if(term(Token.NUMBER)){
+            return true;
+        } 
+        else{
+            return false;
+        }
+    }
+
 }
